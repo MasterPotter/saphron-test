@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edtech - Student Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2D5F8D;
+            --primary-light: #4A8EC2;
+            --accent: #F4A261;
+            --accent-dark: #E76F51;
+            --bg: #F8F6F3;
+            --surface: #FFFFFF;
+            --text: #2C3E50;
+            --text-light: #6C7A89;
+            --success: #52B788;
+            --border: #E8E4DF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--primary) 0%, #1a3a5c 100%);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            color: white;
+            padding: 0 2rem;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-item {
+            padding: 1rem 2rem;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--accent);
+        }
+
+        .nav-item.active {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border-left-color: var(--accent);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem 3rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .header-left h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .header-subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .notification-bell {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            background: var(--surface);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .notification-bell:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--accent-dark);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--surface);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .user-profile:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            opacity: 0.1;
+            border-radius: 0 0 0 100%;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid var(--border);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.75rem;
+            color: var(--primary);
+        }
+
+        .view-all-btn {
+            color: var(--primary-light);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .view-all-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Messages List */
+        .message-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .message-item:hover {
+            background: var(--bg);
+            border-color: var(--border);
+        }
+
+        .message-item.unread {
+            background: rgba(74, 142, 194, 0.05);
+        }
+
+        .message-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .message-time {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .message-preview {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Activity List */
+        .activity-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background: var(--bg);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .activity-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .activity-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            flex-shrink: 0;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 95, 141, 0.3);
+        }
+
+        .action-btn.secondary {
+            background: var(--accent);
+        }
+
+        .action-btn.secondary:hover {
+            box-shadow: 0 8px 20px rgba(244, 162, 97, 0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card, .content-section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .main-content {
+                margin-left: 80px;
+                padding: 1.5rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .nav-item span {
+                display: none;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">Edtech<span>.</span></div>
+            <div class="nav-item active">
+                <div class="nav-icon">📊</div>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">💬</div>
+                <span>Messages</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👥</div>
+                <span>My Friends</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📅</div>
+                <span>Calendar</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📚</div>
+                <span>Homework</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">🎨</div>
+                <span>Activities</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📄</div>
+                <span>Documents</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">🏆</div>
+                <span>Rewards</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">⚙️</div>
+                <span>Settings</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Welcome back, Student</h1>
+                    <p class="header-subtitle">Tuesday, February 10 • 3rd Grade - Room 204</p>
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell">
+                        🔔
+                        <div class="notification-badge">2</div>
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-avatar">S</div>
+                        <span>Student</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Stats -->
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Star Points</div>
+                    <div class="stat-value">47</div>
+                    <div class="stat-change">↑ Keep it up!</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Homework Tasks</div>
+                    <div class="stat-value">3</div>
+                    <div class="stat-change">Due this week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Upcoming Events</div>
+                    <div class="stat-value">5</div>
+                    <div class="stat-change">This week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Friends Online</div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-change">Available to chat</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Quick Actions</h2>
+                </div>
+                <div class="quick-actions">
+                    <button class="action-btn">
+                        ✉️ Send Message
+                    </button>
+                    <button class="action-btn secondary">
+                        📚 Check Homework
+                    </button>
+                    <button class="action-btn">
+                        📅 View Calendar
+                    </button>
+                    <button class="action-btn secondary">
+                        🎨 Join Activity
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Messages -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Messages</h2>
+                    <a href="#" class="view-all-btn">View All →</a>
+                </div>
+                <div class="message-item unread">
+                    <div class="message-avatar">T</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-sender">Teacher</span>
+                            <span class="message-time">10 minutes ago</span>
+                        </div>
+                        <div class="message-preview">Great job on your science project! You showed wonderful creativity...</div>
+                    </div>
+                </div>
+                <div class="message-item unread">
+                    <div class="message-avatar">S</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-sender">Student (Friend)</span>
+                            <span class="message-time">1 hour ago</span>
+                        </div>
+                        <div class="message-preview">Do you want to work on the art project together after school?</div>
+                    </div>
+                </div>
+                <div class="message-item">
+                    <div class="message-avatar">📚</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-sender">School Library</span>
+                            <span class="message-time">Yesterday</span>
+                        </div>
+                        <div class="message-preview">Your book is due next Friday. Remember to return it!</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Schedule -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Today's Schedule</h2>
+                    <a href="#" class="view-all-btn">View Full Calendar →</a>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">📚</div>
+                    <div class="activity-details">
+                        <div class="activity-title">Reading Time</div>
+                        <div class="activity-meta">
+                            <span>🕐 9:00 AM - 10:00 AM</span>
+                            <span>📍 Room 204</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">🔬</div>
+                    <div class="activity-details">
+                        <div class="activity-title">Science Lab</div>
+                        <div class="activity-meta">
+                            <span>🕐 10:30 AM - 11:30 AM</span>
+                            <span>📍 Science Lab</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">🎨</div>
+                    <div class="activity-details">
+                        <div class="activity-title">Art Class</div>
+                        <div class="activity-meta">
+                            <span>🕐 1:00 PM - 2:00 PM</span>
+                            <span>📍 Art Room</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
